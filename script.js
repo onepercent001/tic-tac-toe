@@ -1,65 +1,97 @@
-const board = document.getElementById('board');
-const resetButton = document.getElementById('resetButton');
-let currentPlayer = 'X';
-let gameState = ['', '', '', '', '', '', '', '', ''];
-let isGameActive = true;
+const cells = document.querySelectorAll('.cell');
+const resetButton = document.getElementById('reset');
+let currentPlayer = 'X'; // Start with player X
+let gameActive = true; // Game status
+let gameState = ["", "", "", "", "", "", "", "", ""]; // Game state
 
+// Winning combinations
 const winningConditions = [
-    [0, 1, 2], [3, 4, 5], [6, 7, 8],
-    [0, 3, 6], [1, 4, 7], [2, 5, 8],
-    [0, 4, 8], [2, 4, 6]
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6]
 ];
 
-// Function to check for a winner
-const checkWinner = () => {
-    for (let condition of winningConditions) {
-        const [a, b, c] = condition;
-        if (gameState[a] && gameState[a] === gameState[b] && gameState[a] === gameState[c]) {
-            return condition; // Return the winning condition
-        }
+// Handle cell click
+function handleCellClick(event) {
+    const clickedCell = event.target;
+    const clickedCellIndex = parseInt(clickedCell.getAttribute('data-index'));
+
+    if (gameState[clickedCellIndex] !== "" || !gameActive) {
+        return; // Cell already clicked or game is not active
     }
-    return null;
-};
 
-// Function to handle cell clicks
-const handleClick = (index) => {
-    if (gameState[index] || !isGameActive) return;
-    gameState[index] = currentPlayer;
+    // Update the game state
+    gameState[clickedCellIndex] = currentPlayer;
 
-    const cell = document.createElement('div');
-    cell.classList.add('cell');
-    cell.textContent = currentPlayer;
-    board.children[index].appendChild(cell);
+    // Create image element based on current player
+    const img = document.createElement('img');
+    img.src = currentPlayer === 'X' ? 'x-image.jpg' : 'o-image.jpg'; // Use the image filenames you provided
+    clickedCell.appendChild(img); // Append image to clicked cell
 
-    const winningCondition = checkWinner();
-    if (winningCondition) {
-        isGameActive = false;
-        setTimeout(() => alert(`${currentPlayer} wins!`), 100);
-    } else if (!gameState.includes('')) {
-        isGameActive = false;
-        setTimeout(() => alert("It's a draw!"), 100);
-    } else {
-        currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-    }
-};
+    // Check for a winner
+    checkForWinner();
 
-// Initialize the board
-for (let i = 0; i < 9; i++) {
-    const cell = document.createElement('div');
-    cell.classList.add('cell');
-    cell.addEventListener('click', () => handleClick(i));
-    board.appendChild(cell);
+    // Switch player
+    currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
 }
 
-// Function to reset the game
-const resetGame = () => {
-    gameState = ['', '', '', '', '', '', '', '', ''];
-    isGameActive = true;
-    currentPlayer = 'X';
-    Array.from(board.children).forEach(cell => {
-        cell.textContent = '';
-    });
-};
+// Check for winner
+function checkForWinner() {
+    let roundWon = false;
 
-// Reset button click event
-resetButton.onclick = resetGame;
+    for (let i = 0; i < winningConditions.length; i++) {
+        const [a, b, c] = winningConditions[i];
+        if (gameState[a] === "" || gameState[b] === "" || gameState[c] === "") {
+            continue; // Continue to the next condition if there's an empty cell
+        }
+        if (gameState[a] === gameState[b] && gameState[a] === gameState[c]) {
+            roundWon = true;
+            break; // Winner found
+        }
+    }
+
+    if (roundWon) {
+        highlightWinner();
+        gameActive = false; // End game
+        return; // Exit function
+    }
+
+    if (!gameState.includes("")) {
+        alert("Draw!"); // Check for a draw
+        gameActive = false; // End game
+    }
+}
+
+// Highlight the winning sequence
+function highlightWinner() {
+    winningConditions.forEach(condition => {
+        const [a, b, c] = condition;
+        if (gameState[a] === gameState[b] && gameState[a] === gameState[c]) {
+            cells[a].classList.add('winning');
+            cells[b].classList.add('winning');
+            cells[c].classList.add('winning');
+        }
+    });
+}
+
+// Reset the game
+function resetGame() {
+    gameActive = true; // Restart the game
+    currentPlayer = 'X'; // Reset current player
+    gameState = ["", "", "", "", "", "", "", "", ""]; // Reset game state
+
+    cells.forEach(cell => {
+        cell.textContent = ""; // Clear cell content
+        cell.classList.remove('winning'); // Remove highlighting
+        cell.innerHTML = ""; // Clear any images
+    });
+}
+
+// Event listeners
+cells.forEach(cell => cell.addEventListener('click', handleCellClick));
+resetButton.addEventListener('click', resetGame);

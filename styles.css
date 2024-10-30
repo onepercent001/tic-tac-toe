@@ -1,0 +1,55 @@
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #f0f0f0;
+    font-family: 'Arial', sans-serif;
+}
+
+.title {
+    font-size: 64px; /* Font size for the title */
+    margin-bottom: 20px; /* Space between title and game box */
+    margin-top: -1in; /* Move title higher by 3 inches */
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(3, 130px); /* Three columns for the grid */
+    gap: 5px; /* Space between cells */
+    margin-bottom: 25px; /* Space between grid and reset button */
+}
+
+.cell {
+    width: 130px; /* Size of each cell */
+    height: 130px; /* Size of each cell */
+    background-color: #fff;
+    border: 2px solid #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.reset-button {
+    margin-top: 22px; /* Space above the reset button */
+    padding: 10px 20px;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.winning {
+    background-color: #4caf50; /* Highlight winning squares */
+}
+
+.cell img {
+    width: 100px; /* Size of images in the cell */
+    height: 100px; /* Size of images in the cell */
+}
