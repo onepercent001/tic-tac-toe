@@ -2,12 +2,12 @@ const board = document.getElementById('board');
 const resetButton = document.getElementById('resetButton');
 let currentPlayer = 'X';
 let gameState = ['', '', '', '', '', '', '', '', ''];
-let isGameActive = true; // Track if the game is still active
+let isGameActive = true;
 
 const winningConditions = [
-    [0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
-    [0, 3, 6], [1, 4, 7], [2, 5, 8], // columns
-    [0, 4, 8], [2, 4, 6] // diagonals
+    [0, 1, 2], [3, 4, 5], [6, 7, 8],
+    [0, 3, 6], [1, 4, 7], [2, 5, 8],
+    [0, 4, 8], [2, 4, 6]
 ];
 
 // Function to check for a winner
@@ -42,12 +42,12 @@ const drawWinningLine = (winningCondition) => {
     line.style.left = `${midX}px`;
     line.style.top = `${midY}px`;
     line.style.transform += `rotate(${Math.atan2(endY - startY, endX - startX)}rad)`;
-    document.body.appendChild(line); // Add the line to the body
+    document.body.appendChild(line);
 };
 
 // Function to handle cell clicks
 const handleClick = (index) => {
-    if (gameState[index] || !isGameActive) return; // Prevent actions if the cell is filled or game is over
+    if (gameState[index] || !isGameActive) return;
     gameState[index] = currentPlayer;
 
     const cell = document.createElement('div');
@@ -57,15 +57,14 @@ const handleClick = (index) => {
 
     const winningCondition = checkWinner();
     if (winningCondition) {
-        isGameActive = false; // Stop the game
-        drawWinningLine(winningCondition); // Draw line
+        isGameActive = false;
+        drawWinningLine(winningCondition);
         setTimeout(() => alert(`${currentPlayer} wins!`), 100);
     } else if (!gameState.includes('')) {
-        // Check for a draw (if there are no empty cells left)
-        isGameActive = false; // Stop the game
+        isGameActive = false;
         setTimeout(() => alert("It's a draw!"), 100);
     } else {
-        currentPlayer = currentPlayer === 'X' ? 'O' : 'X'; // Switch players
+        currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
     }
 };
 
@@ -83,10 +82,10 @@ const resetGame = () => {
     isGameActive = true;
     currentPlayer = 'X';
     Array.from(board.children).forEach(cell => {
-        cell.textContent = ''; // Clear the cells
+        cell.textContent = '';
     });
     const winningLine = document.querySelector('.winning-line');
-    if (winningLine) winningLine.remove(); // Remove the winning line
+    if (winningLine) winningLine.remove();
 };
 
 // Reset button click event
