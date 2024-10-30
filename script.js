@@ -1,26 +1,28 @@
-const board = document.getElementById('board');
-let currentPlayer = 'X';
-let gameState = ['', '', '', '', '', '', '', '', ''];
-let isGameActive = true; // Track if the game is still active
+// Function to display the winning line
+const drawWinningLine = (winningCondition) => {
+    const line = document.createElement('div');
+    line.classList.add('winning-line');
+    const [a, b, c] = winningCondition;
 
-const winningConditions = [
-    [0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
-    [0, 3, 6], [1, 4, 7], [2, 5, 8], // columns
-    [0, 4, 8], [2, 4, 6] // diagonals
-];
+    // Calculate the position based on the winning cells
+    const startCell = board.children[a].getBoundingClientRect();
+    const endCell = board.children[c].getBoundingClientRect();
+    
+    const startX = startCell.left + startCell.width / 2;
+    const startY = startCell.top + startCell.height / 2;
+    const endX = endCell.left + endCell.width / 2;
+    const endY = endCell.top + endCell.height / 2;
 
-// Function to check for a winner
-const checkWinner = () => {
-    for (let condition of winningConditions) {
-        const [a, b, c] = condition;
-        if (gameState[a] && gameState[a] === gameState[b] && gameState[a] === gameState[c]) {
-            return gameState[a];
-        }
-    }
-    return null;
+    const midX = (startX + endX) / 2;
+    const midY = (startY + endY) / 2;
+
+    line.style.left = `${midX}px`;
+    line.style.top = `${midY}px`;
+    line.style.transform += `rotate(${Math.atan2(endY - startY, endX - startX)}rad)`;
+    document.body.appendChild(line); // Add the line to the body
 };
 
-// Function to handle cell clicks
+// Update the handleClick function to call drawWinningLine
 const handleClick = (index) => {
     if (gameState[index] || !isGameActive) return; // Prevent actions if the cell is filled or game is over
     gameState[index] = currentPlayer;
@@ -33,6 +35,8 @@ const handleClick = (index) => {
     const winner = checkWinner();
     if (winner) {
         isGameActive = false; // Stop the game
+        const winningCondition = winningConditions.find(condition => condition.includes(index) && condition.every(i => gameState[i] === winner));
+        drawWinningLine(winningCondition); // Draw line
         setTimeout(() => alert(`${winner} wins!`), 100);
     } else if (!gameState.includes('')) {
         // Check for a draw (if there are no empty cells left)
@@ -42,27 +46,3 @@ const handleClick = (index) => {
         currentPlayer = currentPlayer === 'X' ? 'O' : 'X'; // Switch players
     }
 };
-
-// Initialize the board
-for (let i = 0; i < 9; i++) {
-    const cell = document.createElement('div');
-    cell.classList.add('cell');
-    cell.addEventListener('click', () => handleClick(i));
-    board.appendChild(cell);
-}
-
-// Function to reset the game
-const resetGame = () => {
-    gameState = ['', '', '', '', '', '', '', '', ''];
-    isGameActive = true;
-    currentPlayer = 'X';
-    Array.from(board.children).forEach(cell => {
-        cell.textContent = ''; // Clear the cells
-    });
-};
-
-// Add a reset button
-const resetButton = document.createElement('button');
-resetButton.textContent = 'Restart Game';
-resetButton.onclick = resetGame;
-document.body.appendChild(resetButton);
