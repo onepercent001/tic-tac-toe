@@ -1,4 +1,5 @@
 const board = document.getElementById('board');
+const resetButton = document.getElementById('resetButton');
 let currentPlayer = 'X';
 let gameState = ['', '', '', '', '', '', '', '', ''];
 let isGameActive = true; // Track if the game is still active
@@ -14,7 +15,7 @@ const checkWinner = () => {
     for (let condition of winningConditions) {
         const [a, b, c] = condition;
         if (gameState[a] && gameState[a] === gameState[b] && gameState[a] === gameState[c]) {
-            return gameState[a];
+            return condition; // Return the winning condition
         }
     }
     return null;
@@ -54,12 +55,11 @@ const handleClick = (index) => {
     cell.textContent = currentPlayer;
     board.children[index].appendChild(cell);
 
-    const winner = checkWinner();
-    if (winner) {
+    const winningCondition = checkWinner();
+    if (winningCondition) {
         isGameActive = false; // Stop the game
-        const winningCondition = winningConditions.find(condition => condition.every(i => gameState[i] === winner));
         drawWinningLine(winningCondition); // Draw line
-        setTimeout(() => alert(`${winner} wins!`), 100);
+        setTimeout(() => alert(`${currentPlayer} wins!`), 100);
     } else if (!gameState.includes('')) {
         // Check for a draw (if there are no empty cells left)
         isGameActive = false; // Stop the game
@@ -85,10 +85,9 @@ const resetGame = () => {
     Array.from(board.children).forEach(cell => {
         cell.textContent = ''; // Clear the cells
     });
+    const winningLine = document.querySelector('.winning-line');
+    if (winningLine) winningLine.remove(); // Remove the winning line
 };
 
-// Add a reset button
-const resetButton = document.createElement('button');
-resetButton.textContent = 'Restart Game';
+// Reset button click event
 resetButton.onclick = resetGame;
-document.body.appendChild(resetButton);

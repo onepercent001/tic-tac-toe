@@ -7,12 +7,19 @@
     <style>
         body {
             display: flex;
+            flex-direction: column; /* Arrange children vertically */
             justify-content: center; /* Centers horizontally */
             align-items: center; /* Centers vertically */
             height: 100vh; /* Full height of the viewport */
             margin: 0;
             background-color: #f4f4f4; /* Optional: Change background color */
             position: relative; /* For positioning the winning line */
+        }
+
+        h1 {
+            font-size: 16em; /* 16 inch equivalent in ems */
+            margin-bottom: 10em; /* Gap of 10 inches */
+            text-align: center;
         }
 
         #board {
@@ -37,8 +44,8 @@
         /* Add styles for the winning line */
         .winning-line {
             position: absolute;
-            width: 300px; /* Adjust based on your board size */
-            height: 10px; /* Thickness of the line */
+            width: 10px; /* Adjust thickness of the line */
+            height: 300px; /* Adjust based on your board size */
             background-color: red; /* Color of the line */
             transform: translate(-50%, -50%); /* Center the line */
             z-index: 10; /* Ensure the line is above other elements */
@@ -46,7 +53,9 @@
     </style>
 </head>
 <body>
+    <h1>Tic Tac Toe</h1> <!-- Title of the game -->
     <div id="board"></div>
+    <button id="resetButton">Restart Game</button> <!-- Reset button -->
     <script src="script.js"></script>
 </body>
 </html>
